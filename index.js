@@ -5,9 +5,52 @@ const jwt = require("jsonwebtoken")
 
 const config = require('./config.js')
 
+const auth = require("./middleware/authenticate")
+
 
 const app = express()
 app.use(express.json())
+
+
+
+app.post("/order", auth, async (req,res)=> {
+
+    try{
+    var ProductFK = req.body.ProductFK;
+    var Quantity = req.body.Quantity
+    var OrderDate = req.body.OrderDate
+    
+    if(!ProductFK || !Quantity || !OrderDate){
+        res.status(400).send("bad request")
+    }
+
+
+
+    // console.log(req.customer)
+    // 
+    
+    let insertQuery = `INSERT INTO [Order](OrderDate, Quantity, CustomerFK, ProductFK)
+    OUtPUT inserted.OrderID, inserted.OrderDate, inserted.Quantity, inserted.ProductFK
+    VALUES('${OrderDate}', ${Quantity}, ${req.customer.CustomerID}, ${ProductFK})`
+
+    let insertedOrder = await db.executeQuery(insertQuery)
+
+    // console.log(insertedOrder)
+    res.status(201).send(insertedOrder[0])
+
+}
+    catch(error){
+        console.log("error in POST /order", error)
+        res.status(500).send()
+    }
+
+})
+
+app.get('/customer/me', auth, (req, res) => {
+
+    res.send(req.customer)
+
+})
 
 
 app.get("/hi", (request, response) => {response.send("Hello world")})
