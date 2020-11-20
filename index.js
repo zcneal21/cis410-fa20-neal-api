@@ -28,11 +28,23 @@ app.post("/customer/logout", auth, (req, res)=>{
 })
 })
 
-// app.get("/order/me", auth, async (req,res)=> {
+app.get("/order/me", auth, (req,res)=> {
 
-//     let customerID = req.customer.CustomerID;
+    let customerID = req.customer.CustomerID;
 
-// })
+    var query = `SELECT * 
+    FROM [Order]
+    WHERE CustomerFK = ${req.customer.CustomerID}`
+
+    db.executeQuery(query)
+    .then((result) => {
+        res.status(200).send(result)
+    }).catch((error)=>{
+        res.status(500)
+    })
+
+
+})
 
 app.get('/', (req,res) => {
     res.send("Hello World")
