@@ -15,6 +15,31 @@ app.use(cors())
 
 
 
+app.post("/customer/logout", auth, (req, res)=>{
+    var query = `UPDATE Customer
+    SET Token = NULL
+    WHERE CustomerID = ${req.customer.CustomerID}`
+
+    db.executeQuery(query)
+    .then(()=>{res.status(200).send()})
+    .catch((error)=>{console.log("Error in POST /customer/logout", error)
+    res.status(500).send()
+
+})
+})
+
+// app.get("/order/me", auth, async (req,res)=> {
+
+//     let customerID = req.customer.CustomerID;
+
+// })
+
+app.get('/', (req,res) => {
+    res.send("Hello World")
+})
+
+
+
 app.post("/order", auth, async (req,res)=> {
 
     try{
